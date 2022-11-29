@@ -435,6 +435,8 @@ class _AESEnctype(_SimplifiedEnctype):
     def string_to_key(cls, string, salt, params):
         (iterations,) = unpack('>L', params or b'\x00\x00\x10\x00')
         prf = lambda p, s: HMAC.new(p, s, SHA).digest()
+        if isinstance(string, str):
+            string = string.encode("utf-8")
         seed = PBKDF2(string, salt, cls.seedsize, iterations, prf)
         tkey = cls.random_to_key(seed)
         return cls.derive(tkey, b'kerberos')
